@@ -9,6 +9,7 @@ import usersPutRoute from "./user/put";
 import authLoginRoute from "./auth/login"; // Corrigido: importação do login
 // Em setupAuthRoutes no routes/routerSteup.ts
 import authValidateRoute from "./auth/validate";
+import usersDeleteRoute from "./user/delete";
 
 function setupAuthRoutes(app: Express) {
   const authRouter = ExpressRouter();
@@ -24,6 +25,7 @@ function setupUserRoutes(app: Express) {
   userRouter.use(usersPostRoute);
   userRouter.use(usersGetRoute);
   userRouter.use(usersPutRoute);
+  userRouter.use(usersDeleteRoute);
   app.use("/user", userRouter);
 }
 

@@ -5,5 +5,5 @@ export function getDatabaseConneciton(): Data {
     databaseConnection = new Data();
   }
 
-  return Data;
+  return databaseConnection;
 }
