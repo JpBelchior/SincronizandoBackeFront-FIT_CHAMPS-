@@ -1,36 +1,13 @@
 import { useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
-import { login } from "../services/authService";
+import { NavLink } from "react-router-dom";
 import icone from "../images/icone.png";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  const navigate = useNavigate();
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
-
-    try {
-      await login(username, password);
-      navigate("/Home");
-    } catch (error) {
-      console.error("Erro no login:", error);
-      setError(error.response?.data?.mensagem || "Falha na autenticação");
-    } finally {
-      setLoading(false);
-    }
   };
 
   return (
@@ -62,7 +39,7 @@ export default function Login() {
             Login
           </h2>
 
-          <form className="space-y-6" onSubmit={handleSubmit}>
+          <form className="space-y-6">
             {/* Username Field */}
             <div>
               <label className="block text-blue-200 font-medium mb-2">
@@ -84,8 +61,6 @@ export default function Login() {
                   </svg>
                 </span>
                 <input
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
                   type="text"
                   className="w-full pl-10 pr-4 py-3 bg-sky-900/30 border border-sky-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white placeholder-gray-400"
                   placeholder="Digite seu nome de usuário"
@@ -114,10 +89,6 @@ export default function Login() {
                   </svg>
                 </span>
                 <input
-                  value={password}
-                  onChange={(e) => {
-                    setPassword(e.target.value);
-                  }}
                   type={showPassword ? "text" : "password"}
                   className="w-full pl-10 pr-12 py-3 bg-sky-900/30 border border-sky-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white placeholder-gray-400"
                   placeholder="Digite sua senha"
@@ -183,20 +154,17 @@ export default function Login() {
                 </button>
               </div>
             </div>
-            {error && (
-              <div className="p-3 bg-red-500/20 border border-red-600 rounded-lg text-red-200 text-center">
-                {error}
-              </div>
-            )}
 
             {/* Login Button */}
             <div className="pt-2">
-              <button
-                type="submit"
-                className="w-full bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white font-bold py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
-              >
-                ENTRAR
-              </button>
+              <NavLink to="/Home" className="block w-full">
+                <button
+                  type="submit"
+                  className="w-full bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white font-bold py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
+                >
+                  ENTRAR
+                </button>
+              </NavLink>
             </div>
 
             {/* Signup Link - Two Column Layout */}
