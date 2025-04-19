@@ -13,3 +13,13 @@ export type Users = {
   dataCriacao?: Date;
   ultimoLogin?: Date;
 };
+export type AuthResponse = {
+  user: Omit<Users, "senha">;
+  token: string;
+};
+
+// Tipo para requisições de login
+export type LoginRequest = {
+  email: string;
+  senha: string;
+};

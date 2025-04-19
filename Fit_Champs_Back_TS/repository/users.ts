@@ -8,6 +8,7 @@ export interface IUserRepo {
   findByEmail(email: string): Promise<Users | null>;
   findById(id: string): Promise<Users | null>;
   updateLastLogin(id: string): Promise<void>;
+  update(id: string, data: Partial<Users>): Promise<Users>;
 }
 
 export class UserRepoMock implements IUserRepo {
@@ -68,5 +69,37 @@ export class UserRepoMock implements IUserRepo {
     if (userIndex >= 0) {
       this.users[userIndex].ultimoLogin = new Date();
     }
+  }
+  async update(id: string, data: Partial<Users>): Promise<Users> {
+    const userIndex = this.users.findIndex((user) => user.id === id);
+
+    if (userIndex < 0) {
+      throw new Error("Usuário não encontrado");
+    }
+
+    // Não permitir atualização de senha por esta rota (deve ter uma rota específica)
+    const updateData = { ...data };
+    if (updateData.senha) {
+      delete updateData.senha;
+    }
+
+    // Atualizar dados
+    this.users[userIndex] = {
+      ...this.users[userIndex],
+      ...updateData,
+    };
+
+    // Recalcular IMC se altura ou peso foram atualizados
+    if (updateData.altura || updateData.peso) {
+      const { altura, peso } = this.users[userIndex];
+      if (altura && peso) {
+        const alturaMetros = altura / 100;
+        this.users[userIndex].imc = peso / (alturaMetros * alturaMetros);
+      }
+    }
+
+    // Retornar usuário sem a senha
+    const { senha, ...userWithoutPassword } = this.users[userIndex];
+    return userWithoutPassword as Users;
   }
 }

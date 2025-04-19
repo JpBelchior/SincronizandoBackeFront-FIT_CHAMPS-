@@ -81,6 +81,25 @@ class UserController {
   async getUserById(id: string): Promise<Users | null> {
     return this.userRepo.findById(id);
   }
+
+  async updateUser(id: string, data: Partial<Users>): Promise<Users> {
+    // Verificar se o usuário existe
+    const existingUser = await this.userRepo.findById(id);
+    if (!existingUser) {
+      throw new Error("Usuário não encontrado");
+    }
+
+    // Se o e-mail estiver sendo atualizado, verificar se já existe
+    if (data.email && data.email !== existingUser.email) {
+      const userWithSameEmail = await this.userRepo.findByEmail(data.email);
+      if (userWithSameEmail) {
+        throw new Error("Email já cadastrado para outro usuário");
+      }
+    }
+
+    // Atualizar os dados do usuário
+    return this.userRepo.update(id, data);
+  }
 }
 
 export const userControllerInstance = new UserController();
