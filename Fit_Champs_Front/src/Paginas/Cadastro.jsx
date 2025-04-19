@@ -11,6 +11,8 @@ import {
   Info,
   ArrowLeft,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { register } from "../services/authService";
 
 const Cadastro = () => {
   // Estados para os campos do formulário
@@ -135,7 +137,9 @@ const Cadastro = () => {
   };
 
   // Função para validar e enviar o formulário
-  const handleSubmit = (e) => {
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Validação das senhas
@@ -150,33 +154,38 @@ const Cadastro = () => {
       return;
     }
 
-    // Preparar dados para envio (removendo confirmPassword)
-    const dataToSubmit = {
-      ...formData,
-      confirmPassword: undefined,
-    };
+    try {
+      // Preparar dados para envio
+      const userData = {
+        nome: formData.name,
+        email: formData.email,
+        senha: formData.password,
+        telefone: formData.phone,
+        idade: parseInt(formData.age),
+        altura: parseInt(formData.altura),
+        peso: parseFloat(formData.weight),
+        cidade: formData.cidade,
+        sexo: formData.sexo,
+        IMC:
+          formData.peso / ((formData.altura / 100) * (formData.altura / 100)),
+      };
 
-    // Aqui você enviaria os dados para o servidor (API)
-    console.log("Dados enviados:", dataToSubmit);
-    showNotification("Cadastro realizado com sucesso!", "success");
+      // Enviar dados para a API
+      const response = await register(userData);
 
-    // Limpar formulário
-    setFormData({
-      name: "",
-      email: "",
-      age: "",
-      weight: "",
-      phone: "",
-      password: "",
-      confirmPassword: "",
-      altura: "",
-      cidade: "",
-      sexo: "",
-    });
+      showNotification("Cadastro realizado com sucesso!", "success");
 
-    setPasswordStrength({ score: 0, color: "" });
+      // Redirecionar para a página inicial após 2 segundos
+      setTimeout(() => {
+        navigate("/Home");
+      }, 2000);
+    } catch (error) {
+      console.error("Erro no cadastro:", error);
+      const errorMessage =
+        error.response?.data?.mensagem || "Erro ao realizar cadastro";
+      showNotification(errorMessage, "error");
+    }
   };
-
   // Toggle para mostrar/esconder senha
   const togglePasswordVisibility = (field) => {
     if (field === "password") {
