@@ -9,6 +9,7 @@ export interface IUserRepo {
   findById(id: string): Promise<Users | null>;
   updateLastLogin(id: string): Promise<void>;
   update(id: string, data: Partial<Users>): Promise<Users>;
+  delete(id: string): Promise<void>;
 }
 
 export class UserRepoMock implements IUserRepo {
@@ -20,6 +21,15 @@ export class UserRepoMock implements IUserRepo {
     this.nextId = 1;
   }
 
+  async delete(id: string): Promise<void> {
+    const userIndex = this.users.findIndex((user) => user.id === id);
+
+    if (userIndex < 0) {
+      throw new Error("User not found");
+    }
+
+    this.users.splice(userIndex, 1);
+  }
   async create(user: Users): Promise<Users> {
     // Hash da senha antes de armazenar
     const hashedPassword = await AuthService.hashPassword(user.senha);

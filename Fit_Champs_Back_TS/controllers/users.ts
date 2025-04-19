@@ -11,6 +11,16 @@ class UserController {
     this.userRepo = reporitoryCollectionInstance.userRepo;
   }
 
+  async deleteUser(id: string): Promise<void> {
+    // Check if user exists
+    const existingUser = await this.userRepo.findById(id);
+    if (!existingUser) {
+      throw new Error("User not found");
+    }
+
+    // Delete user
+    await this.userRepo.delete(id);
+  }
   async register(
     userData: Omit<Users, "id">
   ): Promise<{ user: Omit<Users, "senha">; token: string }> {
